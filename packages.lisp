@@ -29,7 +29,6 @@
 
 (defpackage :cl-latex
   (:use :cl)
-  (:nicknames :tex)
-  #+:sbcl (:shadow :defconstant))
+  (:nicknames :tex))
 
 (pushnew :cl-latex *features*)
