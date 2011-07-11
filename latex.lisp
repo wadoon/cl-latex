@@ -34,8 +34,8 @@
 (defun latex-command (command)
   (cons
    `(princ ,(latex-print-command (first command) "\\~a") stream)
-   (nconc (latex-expand (rest command) "{~a}")
-	  `((princ " " stream)))))
+   (append (latex-expand (rest command) "{~a}")
+	   '((princ " " stream)))))
   
 
 (defun latex-esc-char (c)
@@ -59,6 +59,8 @@
 (defun latex-traverse (expr)
   (cond ((or (symbolp expr) (stringp expr))
 	 `((princ ,expr stream)))
+	((characterp expr)
+	 `((princ ,(make-string 1 :initial-element expr) stream)))
 	((and (listp expr)
 	      (keywordp (first expr)))
 	  (latex-command expr))
@@ -87,25 +89,13 @@
 	 (T
 	  (cons (first lis)
 		(optimize-multiple-princ (rest lis))))))
-				       
+			
+(defmacro append-mapcar (&rest mapcar-args)
+  `(apply 'append (mapcar ,@mapcar-args)))
 
 (defmacro with-latex-output ((stream) &body expr)
   `(let ((stream ,stream))
-     ,@(optimize-multiple-princ (mapcan 'latex-traverse expr))))
+     ,@(optimize-multiple-princ (append-mapcar 'latex-traverse expr))))
 
-;;test
-
-(let ((a "Alexander"))
-  (with-latex-output (*standard-output*)
-    (:documentclass "scrreprt")
-    "\n"
-    (:Latex)
-    (:author a)
-    (setf a "test")
-    (env :document ()
-	 (:textbf "My First Example Latex")
-	 (env :center ()
-	      (esc "Bayern & Sohn")
-	      (:textsl "Adskfsdlkfjsdalfkjsdalkfjsd dfdsf sdfsadf")))))
-  
-  
+(defmacro latex (&rest expr)
+  `(progn ,@(optimize-multiple-princ (append-mapcar 'latex-traverse expr))))
