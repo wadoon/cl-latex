@@ -2,9 +2,9 @@
 
 This library produces latex code from s-expr similiar to cl-who for html.
 
-License: cc-by-sa 3.0
-Author:  Alexander Weigl <alexweigl@gmail.com>
-Date: 2011-07-08
+    License: cc-by-sa 3.0
+    Author:  Alexander Weigl <alexweigl@gmail.com>
+    Date: 2011-07-08
 
 
 ## Example
